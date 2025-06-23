@@ -85,3 +85,17 @@ export const markTodoAsCompleted = async(id,dispatch) => {
     
   }
 }
+
+export const signup = async(formData) => {
+  try {
+    if (!formData.email || !formData.password || !formData.user_name ) {
+      return;  
+    }
+    const {data} = await api.post(`/signup`,formData);
+    console.log("Signup frontend calling api ",data);
+    return data.message;
+  } catch (error) {
+    console.log(error.response.data.message);
+    
+  }
+}
