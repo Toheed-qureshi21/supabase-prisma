@@ -1,14 +1,14 @@
 'use client';
-import { getAllTodos, toUpdateTodo } from '@/libs/api-calling';
+import { getAllTodos, markTodoAsCompleted, toDeleteTodo, toUpdateTodo } from '@/libs/api-calling';
 import { toggleCompletionTodo } from '@/libs/redux/slices/task.slice';
-import { Pen, Trash2Icon } from 'lucide-react';
+import { Loader2Icon, Pen, Trash2Icon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 export default function TodoList() {
-  const { todos } = useSelector(state => state.todo);
+  const { todos,updateLoading,deleteLoading } = useSelector(state => state.todo);
   const dispatch = useDispatch();
-
+  console.log("update loading ",updateLoading)
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editTodo, setEditTodo] = useState(null);
   const [editFields, setEditFields] = useState({ title: '', description: '' });
@@ -29,9 +29,34 @@ export default function TodoList() {
   };
 
   const handleSave = async() => {
-    await toUpdateTodo(editTodo.id,dispatch,editFields);
-    closeDialog();
+    try {
+      await toUpdateTodo(editTodo.id,dispatch,editFields);
+      closeDialog();
+      
+    } catch (error) {
+      console.log(error);
+      
+    }
   };
+
+  const handleDeleteTodo = async(id) => {
+    try {
+      await toDeleteTodo(id,dispatch);
+      console.log("Task deleted successfully")
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+  const handleTodoAsCompletion = async(id) => {
+    try {
+      await markTodoAsCompleted(id,dispatch);
+    } catch (error) {
+      console.log(error);
+      
+    }
+  }
+  
 
   return (
     <div className="w-full max-w-sm min-h-fit mx-auto px-4 py-6 space-y-6" >
@@ -71,7 +96,7 @@ export default function TodoList() {
                   <Pen size={16} />
                 </button>
                 <button
-                  // onClick={() => dispatch(deleteTodo(todo.id))}
+                  onClick={()=>handleDeleteTodo(todo.id)}
                   className="bg-red-600 p-2 rounded-full text-white hover:bg-red-700"
                   title="Delete"
                 >
@@ -94,7 +119,7 @@ export default function TodoList() {
                 <input
                   type="checkbox"
                   checked={todo.isCompleted}
-                  onChange={() => dispatch(toggleCompletionTodo(todo.id))}
+                  onChange={() =>handleTodoAsCompletion(todo.id)}
                   className="h-4 w-4 accent-emerald-600"
                 />
                 <span
@@ -112,7 +137,7 @@ export default function TodoList() {
 
       {/* Modal Dialog */}
      {isDialogOpen && (
-  <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+  <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
     <div className="bg-white w-full max-w-sm p-6 rounded-xl shadow-lg">
       <h2 className="text-lg font-semibold mb-4 text-gray-800">Edit Todo</h2>
       <form className="space-y-4">
@@ -154,10 +179,14 @@ export default function TodoList() {
           </button>
           <button
             type="button"
+            disabled={updateLoading}
             onClick={()=>handleSave()}
-            className="px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white text-sm"
+            className="flex justify-center text-center px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white text-sm"
           >
-            Save
+            {
+              updateLoading ?  <Loader2Icon className='w-5 h-5 animate-spin'/>  :"Save"
+            }
+            
           </button>
         </div>
       </form>

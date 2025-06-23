@@ -1,11 +1,14 @@
 import axios from "axios";
 import {
   addTodo,
+  deleteTodo,
   setAddTodoLoading,
+  setDeleteLoading,
   setError,
   setLoading,
   setTodo,
   setUpdateLoading,
+  toggleCompletionTodo,
   updateTodo,
 } from "./redux/slices/task.slice";
 
@@ -45,14 +48,40 @@ export const getAllTodos = async (dispatch) => {
 }
 
 export const toUpdateTodo = async(id,dispatch,{title,description}) => {
-  dispatch(setUpdateLoading())
   try {
-    console.log("id form frontend ",id,typeof(id))
+    dispatch(setUpdateLoading())
     const {data} = await api.put(`/${id}`,{title,description});
     dispatch(updateTodo({id,title,description}));
 
   } catch (error) {
      setError(error.response.data.message);
     console.log(error?.response?.data?.message);
+  }
+}
+// function to call api to delete todo with a delete requesst 
+// api route will be ---> `/$id` with delete request
+export const toDeleteTodo = async(id,dispatch) => {
+    try {
+      dispatch(setDeleteLoading());
+      const {data} = await api.delete(`/${id}`);
+      dispatch(deleteTodo(id));
+      console.log(data);
+      return data.message;
+    } catch (error) {
+      setError(error.response.data.message);
+      console.log(error?.response?.data?.message);
+    }
+}
+
+export const markTodoAsCompleted = async(id,dispatch) => {
+  try {
+    const {data} = api.patch(`/${id}`);
+    dispatch(toggleCompletionTodo(id));
+    console.log(data);
+    return data;
+  } catch (error) {
+    setError(error?.response?.data?.message);
+      console.log(error?.response?.data?.message);
+    
   }
 }

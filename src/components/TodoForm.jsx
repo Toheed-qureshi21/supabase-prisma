@@ -1,26 +1,31 @@
 'use client'
 
 import { addTask } from "@/libs/api-calling.js";
+import { Loader2 } from "lucide-react";
 import { useState } from "react"
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function TodoForm() {
-    const [todo, setTodo] = useState([]);
+ 
     const [tasks, setTasks] = useState({
         title: "",
         description: "",
     });
     const dispatch = useDispatch();
+    const {addLoading} = useSelector((state)=>state.todo);
 
     const handleFormSubmit = async (e) => {
         e.preventDefault()
+        if (!tasks.title.trim() || !tasks.description.trim()) {
+            return;
+        }
         const data = await addTask(tasks,dispatch);
         console.log(data);
         setTasks({
               title: "",
         description: "",
         })
-        setTodo(data)
+
     }
 
 
@@ -45,9 +50,17 @@ export default function TodoForm() {
                 ></textarea>
                 <button
                     type="submit"
-                    className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition"
+                    disabled={addLoading}
+                    className={`w-full flex justify-center text-center bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition ${addLoading && "opacity-90"}`}
                 >
-                    Add Task
+                    {
+                        addLoading ? (
+                            <Loader2 className="animate-spin text-center w-5 h-5"/>
+                        ):(
+                           <span> Add Task</span>
+                        )
+                    }
+                    
                 </button>
             </form>
         </div>
