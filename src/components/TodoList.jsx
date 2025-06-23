@@ -15,6 +15,8 @@ export default function TodoList() {
 
   useEffect(() => {
     getAllTodos(dispatch);
+    console.log("todos ",todos);
+    
   }, [dispatch]);
 
   const openEditDialog = (todo) => {
@@ -63,7 +65,7 @@ export default function TodoList() {
       {todos?.length === 0 ? (
         <p className="text-center text-gray-400 italic">No todos yet. Start creating!</p>
       ) : (
-        todos.map(todo => (
+        todos?.map(todo => (
           <div
             key={todo.id}
             className={`group relative rounded-xl p-4 shadow-lg border border-transparent hover:border-indigo-400  transition-all duration-300 ${

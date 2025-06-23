@@ -12,7 +12,7 @@ import {
   updateTodo,
 } from "./redux/slices/task.slice";
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
   withCredentials: true,
 });
@@ -37,8 +37,8 @@ export const getAllTodos = async (dispatch) => {
   try {
     dispatch(setLoading(true));
     const {data} = await api.get(`/tasks`);
-    dispatch(setTodo(data));
     console.log(data);
+    dispatch(setTodo(data));
   } catch (error) {
      setError(error.response.data.message);
     console.log(error.response.data.message);
@@ -86,16 +86,3 @@ export const markTodoAsCompleted = async(id,dispatch) => {
   }
 }
 
-export const signup = async(formData) => {
-  try {
-    if (!formData.email || !formData.password || !formData.user_name ) {
-      return;  
-    }
-    const {data} = await api.post(`/signup`,formData);
-    console.log("Signup frontend calling api ",data);
-    return data.message;
-  } catch (error) {
-    console.log(error.response.data.message);
-    
-  }
-}
