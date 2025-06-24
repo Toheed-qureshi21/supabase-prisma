@@ -5,8 +5,9 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux";
 
-export default function TodoForm() {
- 
+export default function TodoForm({userId}) {
+
+    
     const [tasks, setTasks] = useState({
         title: "",
         description: "",
@@ -19,19 +20,20 @@ export default function TodoForm() {
         if (!tasks.title.trim() || !tasks.description.trim()) {
             return;
         }
-        const data = await addTask(tasks,dispatch);
+        const data = await addTask(tasks,dispatch,userId);
         console.log(data);
         setTasks({
               title: "",
         description: "",
-        })
+        });
+        
 
     }
 
 
     return (
-        <div className="w-full max-w-sm mx-auto p-4 bg-white rounded-xl shadow-md">
-            <form className="space-y-3" onSubmit={handleFormSubmit}>
+        <div className="w-sm flex flex-col shadow-2xl bg-gray-100 mx-auto py-12  px-4 rounded-xl">
+            <form className="flex flex-col gap-2" onSubmit={handleFormSubmit}>
                 <input
                     type="text"
                     value={tasks.title}

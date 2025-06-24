@@ -21,21 +21,15 @@ export default function Signup() {
       return;
     }
     try {
-      const res = await api.post(`/signup`, formData);
+      const res = await api.post(`/auth/signup`, formData);
       console.log("Signup users data ", res);
       setFormData({
         user_name: "",
         email: "",
         password: ""
       });
-      console.log(res.status);
-      
-      if (res.status===201) {
-        setTimeout(()=>{
-          router.push("/");
-        },1000)
-      }
-
+      console.log(res.data.message);
+    
     } catch (error) {
       console.log(error.response.data.message);
       

@@ -10,40 +10,49 @@ import {
   setUpdateLoading,
   toggleCompletionTodo,
   updateTodo,
+  updateTodoByCompletionMark,
 } from "./redux/slices/task.slice";
+import toast from "react-hot-toast";
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
   withCredentials: true,
 });
 
-export const addTask = async ({ title, description }, dispatch) => {
+export const addTask = async ({ title, description }, dispatch,userId) => {
   try {
     if (!title || !description) {
       return null;
     }
     dispatch(setAddTodoLoading());
-    const { data } = await api.post(`/tasks`, { title, description });
+    const { data } = await api.post(`/tasks`, { title, description,userId});
    
     dispatch(addTodo(data.data));
+    toast.success(data.message);
     return data.data;
   } catch (error) {
     setError(error?.response?.data?.message);
+    toast.error((error?.response?.data?.message))
+
     console.log(error?.response?.data?.message);
   }
 };
 
-export const getAllTodos = async (dispatch) => {
+export const getAllTodos = async (dispatch,userId) => {
   try {
-    dispatch(setLoading(true));
-    const {data} = await api.get(`/tasks`);
-    console.log(data);
-    dispatch(setTodo(data));
+    // dispatch(setLoading(true));
+    const {data} = await api.get(`/tasks/${userId}`,{
+  headers: {
+    "x-user-id": userId
+  }
+});
+    dispatch(setTodo(data.data));
   } catch (error) {
      setError(error.response.data.message);
+         toast.error((error?.response?.data?.message))
     console.log(error.response.data.message);
   }finally{
-    setLoading(false);
+    dispatch(setLoading(false));
   }
 }
 
@@ -52,9 +61,12 @@ export const toUpdateTodo = async(id,dispatch,{title,description}) => {
     dispatch(setUpdateLoading())
     const {data} = await api.put(`/${id}`,{title,description});
     dispatch(updateTodo({id,title,description}));
+    toast.success(data.data.message);
+    
 
   } catch (error) {
      setError(error.response.data.message);
+         toast.error((error?.response?.data?.message))
     console.log(error?.response?.data?.message);
   }
 }
@@ -66,8 +78,10 @@ export const toDeleteTodo = async(id,dispatch) => {
       const {data} = await api.delete(`/${id}`);
       dispatch(deleteTodo(id));
       console.log(data);
+      toast.success(data.message)
       return data.message;
     } catch (error) {
+          toast.error(error?.response?.data?.message)
       setError(error.response.data.message);
       console.log(error?.response?.data?.message);
     }
@@ -75,9 +89,8 @@ export const toDeleteTodo = async(id,dispatch) => {
 
 export const markTodoAsCompleted = async(id,dispatch) => {
   try {
-    const {data} = api.patch(`/${id}`);
-    dispatch(toggleCompletionTodo(id));
-    console.log(data);
+    const {data} = await api.patch(`/${id}`);
+    
     return data;
   } catch (error) {
     setError(error?.response?.data?.message);
@@ -86,3 +99,4 @@ export const markTodoAsCompleted = async(id,dispatch) => {
   }
 }
 
+// 2025-06-24 09:39:13.961837+00

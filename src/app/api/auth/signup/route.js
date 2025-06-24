@@ -21,7 +21,6 @@ export const POST = async (req) => {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
-    console.log("User data ", userData);
     // userData.session.access_token
     const access_token = userData?.session?.access_token;
     const refresh_token = userData?.session?.refresh_token;

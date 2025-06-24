@@ -8,7 +8,6 @@ export default async function middleware(req) {
     const isPublic = PUBLIC_PATHS.some((path) => url.pathname.startsWith(path));
 
     const accessToken = req.cookies.get("access_token")?.value;
-    console.log(accessToken);
     
 
     if (isPublic) {
@@ -23,9 +22,13 @@ export default async function middleware(req) {
     try {
         const payload = await verifyTokens(accessToken);
     
+        // console.log("payload : ", payload);
+        
         
         const requestHeaders = new Headers(req.headers);
-        // requestHeaders.set("x-user-id", payload.sub); // or appropriate ID
+        
+        requestHeaders.set("x-user-id", payload.sub); 
+        // console.log("headers ",requestHeaders.get("x-user-id"));
 
         return NextResponse.next({
             request: {

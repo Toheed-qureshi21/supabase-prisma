@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   todos: [],
-  loading:false,
+  loading:true,
   addLoading: false,
   updateLoading:false,
   deleteLoading:false,
@@ -57,9 +57,17 @@ const taskSlice = createSlice({
         if (todo) {
             todo.isCompleted = !todo.isCompleted;
         }
-    }
+    },
+    updateTodoByCompletionMark(state, action) {
+  const updatedTodo = action.payload;
+  const index = state.todos.findIndex((todo) => todo.id === updatedTodo.id);
+  if (index !== -1) {
+    state.todos[index] = updatedTodo;
+  }
+}
+
   },
 });
-export const {addTodo,setAddTodoLoading,updateTodo,setUpdateLoading,deleteTodo,setDeleteLoading,toggleCompletionTodo,setError,setLoading,setTodo} = taskSlice.actions;
+export const {addTodo,updateTodoByCompletionMark,setAddTodoLoading,updateTodo,setUpdateLoading,deleteTodo,setDeleteLoading,toggleCompletionTodo,setError,setLoading,setTodo} = taskSlice.actions;
 
 export default taskSlice.reducer;
