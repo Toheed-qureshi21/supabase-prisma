@@ -83,13 +83,13 @@ export default function TodoList({ userId }) {
   }
 
   return (
-    <div className="w-xs sm:w-md mx-auto py-6">
+    <div className="w-xs sm:w-md mx-auto py-6" >
       {/* Search Input */}
       {
         todos?.length > 0 && (
              <div className="mb-6">
         <input
-          className="w-full px-4 py-2 border bg-white border-indigo-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="w-full px-4 py-2 border bg-white border-indigo-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
           type="text"
           placeholder="Search todos..."
           value={search}
@@ -110,7 +110,7 @@ export default function TodoList({ userId }) {
           filteredTodos.map((todo) => (
             <div
               key={todo.id}
-              className={`relative transition-all duration-300 p-5  rounded-xl shadow-md  overflow-hidden bg-white border-2 ${
+              className={`relative bg-gradient-to-br from-blue-700 via-indigo-600 to-purple-700 text-white transition-all duration-300 p-5  rounded-xl shadow-md  overflow-hidden  border-2 ${
                 todo.isCompleted
                   ? " border-green-700"
                   : " border-indigo-700"
@@ -137,14 +137,14 @@ export default function TodoList({ userId }) {
               <div>
                 <h2
                   className={`text-lg font-semibold ${
-                    todo.isCompleted ? "text-gray-700 line-through" : ""
+                    todo.isCompleted ? "text-gray-200 line-through" : ""
                   }`}
                 >
                   {todo.title}
                 </h2>
                 <p
                   className={`mt-1 text-sm ${
-                    todo.isCompleted ? "text-gray-700 line-through" : ""
+                    todo.isCompleted ? "text-gray-200 line-through" : ""
                   }`}
                 >
                   {todo.description}
@@ -153,11 +153,11 @@ export default function TodoList({ userId }) {
 
               <div className="flex justify-between max-sm:gap-1 items-end mt-4">
                 {/* Date */}
-                <div className="text-xs text-gray-500">
-                  <p>{isUpdated ? "Updated at" : "Created at"}</p>
+                <div className="text-xs text-gray-200">
+                  <p>{todo.isUpdated ? "Updated at" : "Created at"}</p>
                   <p>
-                    {isUpdated
-                      ? new Date(todo.created_at).toLocaleDateString(
+                    {todo.isUpdated
+                      ? new Date(todo.updated_at).toLocaleDateString(
                           undefined,
                           {
                             year: "numeric",
@@ -168,15 +168,21 @@ export default function TodoList({ userId }) {
                       : new Date(todo.created_at).toLocaleDateString()}
                   </p>
                   <p>
-                    {isUpdated
-                      ? new Date(todo.created_at).toLocaleTimeString(
+                    {todo.isUpdated
+                      ? new Date(todo.updated_at).toLocaleTimeString(
                           undefined,
                           {
+                            hour12:true,
                             hour: "2-digit",
                             minute: "2-digit",
                           }
                         )
-                      : new Date(todo.created_at).toLocaleTimeString()}
+                      : new Date(todo.created_at).toLocaleTimeString( undefined,
+                          {
+                            hour12:true,
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
                   </p>
                 </div>
 
@@ -293,7 +299,7 @@ export default function TodoList({ userId }) {
                 <button
                   type="button"
                   onClick={closeDialog}
-                  className="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm"
+                  className="px-4 py-2 rounded-md bg-red-600 hover:bg-red-700 text-gray-200 text-sm"
                 >
                   Close
                 </button>

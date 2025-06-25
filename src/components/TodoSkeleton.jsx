@@ -4,7 +4,7 @@ export default function TodoSkeleton() {
       {Array.from({ length: 3 }).map((_, i) => (
         <div
           key={i}
-          className="relative p-5 rounded-xl shadow-md border-2 border-gray-200 bg-white animate-pulse"
+          className="relative p-5 rounded-xl shadow-md border-2 border-gray-400 bg-white animate-pulse"
         >
           {/* Status badge */}
           <div className="absolute top-2 right-2 h-5 w-20 bg-gray-200 rounded-full" />

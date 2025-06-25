@@ -64,7 +64,9 @@ export const toUpdateTodo = async(id,dispatch,{title,description}) => {
   try {
     dispatch(setUpdateLoading())
     const {data} = await api.put(`/${id}`,{title,description});
-    dispatch(updateTodo({id,title,description}));
+    // console.log("data in updated ",data.data[0].updated_at);
+    
+    dispatch(updateTodo({id,title,description,updated_at:data.data[0].updated_at}));
 
     toast.success(data.message);
     
@@ -104,4 +106,3 @@ export const markTodoAsCompleted = async(id,dispatch) => {
   }
 }
 
-// 2025-06-24 09:39:13.961837+00

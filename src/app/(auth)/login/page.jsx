@@ -1,6 +1,7 @@
 "use client";
 
 import { api } from "@/libs/api-calling";
+import { setUser } from "@/libs/redux/slices/user.slice";
 import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -33,7 +34,9 @@ export default function Login() {
         email: "",
         password: "",
       });
+
       if (data) {
+        setUser(data.user)
         router.push("/");
       }
       router.push("/");

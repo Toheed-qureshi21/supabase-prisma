@@ -36,16 +36,18 @@ const taskSlice = createSlice({
     },
     addTodo(state,action){
       const data = action.payload
-        state.todos.unshift({...data,isUpdated:false});
+        state.todos.unshift({...data,isUpdated:false,updated_at:null});
          state.addLoading = false;
         state.error = null;
     },
     updateTodo(state,action){
-        const {id,title,description} = action.payload;
+        const {id,title,description,updated_at} = action.payload;
         const todo = state.todos.find((t)=>t.id===id);
         if (todo) {
             todo.title = title;
             todo.description = description;
+            todo.isUpdated = true;
+            todo.updated_at = updated_at
         }
         state.updateLoading = false;
     },

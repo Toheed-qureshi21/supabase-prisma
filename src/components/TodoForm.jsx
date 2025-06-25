@@ -32,15 +32,15 @@ export default function TodoForm({userId}) {
 
 
     return (
-        <div className=" w-xs sm:w-md flex flex-col shadow-2xl bg-zinc-800  sm:mx-auto py-12 px-4 rounded-xl">
-            <form className="flex flex-col gap-6" onSubmit={handleFormSubmit}>
+        <div className=" w-xs sm:w-md flex flex-col  bg-indigo-100 shadow-2xl sm:mx-auto py-12 px-4 rounded-xl">
+            <form className="flex flex-col gap-6 " onSubmit={handleFormSubmit}>
                 <input
                     type="text"
                     value={tasks.title}
                     onChange={(e) => setTasks((prev) => ({ ...prev, title: e.target.value }))}
                     placeholder="Title"
                     // name="title"
-                    className="w-full px-3 py-2 border bg-transparent text-white rounded-lg text-sm focus:outline-blue-700 focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border  rounded-lg text-sm focus:outline-blue-700 focus:ring-2 focus:ring-blue-500"
                 />
                 <textarea
                     placeholder="Description"
@@ -48,7 +48,7 @@ export default function TodoForm({userId}) {
                     value={tasks.description}
                     onChange={(e) => setTasks((prev) => ({ ...prev, description: e.target.value }))}
                     rows="2"
-                    className="w-full px-3 py-2 border bg-transparent text-white rounded-lg text-sm resize-none focus:outline-blue-700 focus:ring-2 focus:ring-blue-700"
+                    className="w-full px-3 py-2 border rounded-lg text-sm resize-none focus:outline-blue-700 focus:ring-2 focus:ring-blue-700"
                 ></textarea>
                 <button
                     type="submit"
