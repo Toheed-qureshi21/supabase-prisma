@@ -5,11 +5,13 @@ import { api } from "@/libs/api-calling";
 import { supabaseAdmin } from "@/libs/supbaseClient";
 import { headers } from "next/headers";
 import Link from "next/link";
-import toast from "react-hot-toast";
+
 
 export default async function Home(req) {
   const headersList = await headers()
   const userId = headersList.get("x-user-id")
+//  const user = await api.get(`/getProfile`);
+//  console.log(user);
  
   
   

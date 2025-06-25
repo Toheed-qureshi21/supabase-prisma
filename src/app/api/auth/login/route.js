@@ -2,6 +2,7 @@ import { cookieConfigFn } from "@/constants/constant";
 import { supabase } from "@/libs/supbaseClient";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server"
+import { prisma } from "../../../../../prisma/prismaClient";
 
 
 export const POST = async (req) => {
@@ -19,13 +20,18 @@ export const POST = async (req) => {
         const refresh_token = userData?.session?.refresh_token;
         const auth_id = userData?.user?.id;
 
-
+        const user = await prisma.user.findUnique({
+            where:{
+                id:auth_id
+            }
+        });
+        console.log("user in login ",user);
+        
         cookieStore.set("access_token", access_token, cookieConfigFn(60 * 60));
         cookieStore.set("refresh_token", refresh_token, cookieConfigFn(15 * 24 * 60 * 60));
-        console.log("User logged in successfully");
         
         return NextResponse.json(
-            { user: userData.user, message: "User Logged in successfully" },
+            { user, message: "User Logged in successfully" },
             { status: 201 }
         );
 

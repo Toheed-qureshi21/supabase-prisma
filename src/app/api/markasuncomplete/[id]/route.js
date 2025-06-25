@@ -1,19 +1,26 @@
-import { supabaseAdmin } from "@/libs/supbaseClient";
 import { NextResponse } from "next/server";
+import { prisma } from "../../../../../prisma/prismaClient";
 
 export const PATCH = async (req, { params }) => {
   try {
-    const { id } = await params;
-    const { data, error } = await supabaseAdmin.from("todo").update({ isCompleted: false }).eq("id", id).select();
-    if (error) {
-      return NextResponse.json({ error: error.message },{status:400});
-    }
+    const { id } = params;
+    const numericId = parseInt(id);
 
-    console.log("mark as incomplete b ", data);
-    return NextResponse.json({ data, message: "Mark as pending successfully" }, { status: 200 });
+    const updatedTodo = await prisma.todo.update({
+      where: { id: numericId },
+      data: {
+        isCompleted: false,
+      },
+    });
 
+    console.log("mark as incomplete", updatedTodo);
+
+    return NextResponse.json(
+      { data: updatedTodo, message: "Marked as pending successfully" },
+      { status: 200 }
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
-}
+};

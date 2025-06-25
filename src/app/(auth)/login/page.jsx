@@ -5,6 +5,7 @@ import { setUser } from "@/libs/redux/slices/user.slice";
 import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -30,66 +31,76 @@ export default function Login() {
     try {
       const { data } = await api.post(`/auth/login`, formData);
       console.log("login frontend data ", data);
-      setFormData({
-        email: "",
-        password: "",
-      });
+      setFormData({ email: "", password: "" });
 
       if (data) {
-        setUser(data.user)
+        setUser(data.user);
         router.push("/");
       }
-      router.push("/");
     } catch (error) {
-      console.log(error.response.data.message);
+      console.log(error.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-300">
-      <form
-        onSubmit={(e) => handleFormSubmission(e)}
-        className="bg-white p-8 rounded-lg shadow-md  w-xs sm:w-md"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+      <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-lg">
+        <div className="text-center mb-6">
+          <h2 className="text-3xl font-bold text-gray-800">Welcome Back</h2>
+          <p className="text-gray-500 text-sm">Login to your account</p>
+        </div>
 
-        <input
-          type="email"
-          placeholder="Email"
-          name="email"
-          value={formData.email}
-          onChange={(e) => handleInputChange(e)}
-          required
-          className="w-full mb-4 px-4 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+        <form onSubmit={handleFormSubmission} className="space-y-5">
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            value={formData.email}
+            onChange={handleInputChange}
+            required
+            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
 
-        <input
-          type="password"
-          placeholder="Password"
-          name="password"
-          value={formData.password}
-          onChange={(e) => handleInputChange(e)}
-          required
-          className="w-full mb-6 px-4 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <label className="flex gap-2 mb-4">
-        <input type="checkbox" name="" id="" />
-          Remember me
-        </label>
-        <button
-          type="submit"
-          className={`w-full bg-gradient-to-r flex justify-center from-blue-950 to-blue-600 text-white py-3 rounded font-semibold hover:from-blue-950 hover:to-blue-800 transition-all ease-in ${loading ? "opacity-80 hover:cursor-not-allowed":""}`}
-          disabled={loading || !formData.email || !formData.password}
-        >
-          {loading ? (
-            <Loader2Icon size={20} className="animate-spin" />
-          ) : (
-            "Login"
-          )}
-        </button>
-      </form>
+          <input
+            type="password"
+            name="password"
+            placeholder="Password"
+            value={formData.password}
+            onChange={handleInputChange}
+            required
+            className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
+          />
+
+          <div className="flex items-center justify-between text-sm text-gray-600">
+            <label className="flex items-center gap-2">
+              <input type="checkbox" className="accent-blue-600" />
+              Remember me
+            </label>
+            {/* You can add a Forgot Password link here */}
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading || !formData.email || !formData.password}
+            className={`w-full flex justify-center items-center gap-2 bg-gradient-to-r from-blue-900 to-blue-600 text-white py-3 rounded-md font-semibold transition-all ${
+              loading
+                ? "opacity-80 cursor-not-allowed"
+                : "hover:from-blue-950 hover:to-blue-700"
+            }`}
+          >
+            {loading ? <Loader2Icon size={20} className="animate-spin" /> : "Login"}
+          </button>
+        </form>
+
+        <div className="mt-6 text-center text-sm text-gray-600">
+          Not registered yet?{" "}
+          <Link href="/signup" className="text-blue-700 font-medium hover:underline">
+            Sign up
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }

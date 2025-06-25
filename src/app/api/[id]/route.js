@@ -1,44 +1,44 @@
-import { supabase, supabaseAdmin } from "@/libs/supbaseClient";
 import { NextResponse } from "next/server";
+import { prisma } from "../../../../prisma/prismaClient";
+
+// import { prisma } from "@/prisma/prismaClient";
 
 export const PUT = async (req, { params }) => {
   try {
-
     const { title, description } = await req.json();
-    const { id } = await params
+    const { id } = params;
     const numericId = parseInt(id);
-    const { data, error } = await supabaseAdmin.from("todo").update({
-      title, description, isUpdated: true, updated_at: new Date().toISOString()
-    }).eq("id", numericId).select();
 
-    if (error) {
-      console.error(error.message);
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
+    const updatedTodo = await prisma.todo.update({
+      where: { id: numericId },
+      data: {
+        title,
+        description,
+        isUpdated: true,
+        updated_at: new Date(),
+      },
+    });
 
-    return NextResponse.json({ message: "Edited successfully ", data }, { status: 200 })
+    return NextResponse.json({ message: "Edited successfully", data: updatedTodo }, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
+};
 
-}
 
 export const DELETE = async (req, { params }) => {
   try {
-    const { id } = await params;
-    const { data, error } = await supabaseAdmin.from("todo").delete().eq("id", id).select();
-    console.log("deleted data ", data);
+    const { id } = params;
+    const numericId = parseInt(id);
 
-    if (error) {
-      console.error(error);
-      return NextResponse.json({ error: error.message }, { status: 400 });
-    }
-    return NextResponse.json({ message: "Task deleted !" });
+    const deletedTodo = await prisma.todo.delete({
+      where: { id: numericId },
+    });
+
+    return NextResponse.json({ message: "Task deleted!", data: deletedTodo });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
-}
-
-
+};

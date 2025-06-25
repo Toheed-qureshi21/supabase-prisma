@@ -2,6 +2,7 @@ import { cookieConfigFn } from "@/constants/constant";
 import { supabase, supabaseAdmin } from "@/libs/supbaseClient";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { prisma } from "../../../../../prisma/prismaClient.js";
 
 // api route --> /signup
 export const POST = async (req) => {
@@ -14,9 +15,10 @@ export const POST = async (req) => {
         { status: 400 }
       );
     }
-    const { data: userData, error } = await supabase.auth.signUp({
+    const { data: userData, error } = await supabaseAdmin.auth.signUp({
       email,
       password,
+      email_confirm: true
     });
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
@@ -25,29 +27,39 @@ export const POST = async (req) => {
     const access_token = userData?.session?.access_token;
     const refresh_token = userData?.session?.refresh_token;
     const auth_id = userData?.user?.id;
+  
     
     cookieStore.set("access_token", access_token,cookieConfigFn(60*60));
     cookieStore.set("refresh_token", refresh_token,cookieConfigFn(15*24*60*60));
 
-    const { error: insertingError } = await supabaseAdmin.from("users").insert({
-      id: auth_id,
-      user_name,
+    // const { error: insertingError } = await supabaseAdmin.from("users").insert({
+    //   id: auth_id,
+    //   user_name,
+    // });
+    const isUserExist = await prisma.user.findUnique({
+        where: {
+          id: auth_id
+        },
     });
-    if (insertingError) {
-      console.log(insertingError)
-      return NextResponse.json(
-        { error: insertingError.message },
-        { status: 500 }
-      );
+    if (isUserExist) {
+      return NextResponse.json({message:"User already exist with this email"},{status:400});  
     }
-
+    const newUser = await prisma.user.create({
+      data:{
+        id:auth_id,
+        user_name,
+        email
+      }
+    });
+    console.log("new user after signup ",newUser);
+    
 
     return NextResponse.json(
-      { user:userData.user, message: "User registered successfully" },
+      { user:newUser, message: "User registered successfully" },
       { status: 201 }
     );
   } catch (error) {
     console.log(error.message);
-    return NextResponse.json(error.message);
+    return NextResponse.json({message:error.message},{status:500});
   }
 };
