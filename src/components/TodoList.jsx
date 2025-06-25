@@ -188,8 +188,8 @@ export default function TodoList({ userId }) {
 
                 {/*  Dropdown */}
                 <div className="flex flex-col gap-1 text-sm">
-                  <label className="text-gray-600 font-medium text-center">Status</label>
-                  <div className="relative w-full ">
+                  <label className="text-gray-100 font-medium text-center">Status</label>
+                  <div className="relative w-full flex items-center h-12">
                     <select
                       value={todo.isCompleted ? "completed" : "pending"}
                       onChange={() => handleTodoAsCompletion(todo)}
@@ -214,7 +214,7 @@ export default function TodoList({ userId }) {
                     </select>
 
                     {/* Down arrow icon */}
-                    <div className="pointer-events-none absolute top-2 right-3 transform -translate-y-1/2 text-gray-500">
+                    <div className="pointer-events-none absolute right-3  text-gray-500">
                       <ChevronDown/>
                     </div>
                   </div>
