@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { verifyTokens } from "./utils/verify-token";
+import {verifyTokens } from "./utils/verify-token";
+
 
 export default async function middleware(req) {
     const PUBLIC_PATHS = ["/signup", "/login"];
@@ -8,27 +9,30 @@ export default async function middleware(req) {
     const isPublic = PUBLIC_PATHS.some((path) => url.pathname.startsWith(path));
 
     const accessToken = req.cookies.get("access_token")?.value;
+    const refreshToken = req.cookies.get("refresh_token")?.value;
+    
+    
     
 
     if (isPublic) {
         return NextResponse.next(); // allow access
     }
 
-    if (!accessToken) {
+    if (!accessToken && refreshToken) {
         url.pathname = "/login";
         return NextResponse.redirect(url);
     }
-
+    
     try {
         const payload = await verifyTokens(accessToken);
-    
-        // console.log("payload : ", payload);
+        const refreshPayload = await verifyTokens(refreshToken)
+        console.log("refresh Payload ",refreshPayload);
         
         
         const requestHeaders = new Headers(req.headers);
         
         requestHeaders.set("x-user-id", payload.sub); 
-        // console.log("headers ",requestHeaders.get("x-user-id"));
+       
 
         return NextResponse.next({
             request: {

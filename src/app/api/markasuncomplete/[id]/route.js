@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 export const PATCH = async (req, { params }) => {
   try {
     const { id } = await params;
-    const { data, error } = supabaseAdmin.from("todo").update({ isCompleted: false }).eq("id", id).select();
+    const { data, error } = await supabaseAdmin.from("todo").update({ isCompleted: false }).eq("id", id).select();
     if (error) {
       return NextResponse.json({ error: error.message },{status:400});
     }

@@ -1,26 +1,44 @@
 export default function TodoSkeleton() {
   return (
-    <>
-      <div className="animate-pulse w-[23rem] rounded-xl p-4 shadow-lg border border-indigo-200 bg-white">
-        <div className="flex items-start justify-between">
-          <div className="flex-1 space-y-2">
-            <div className="h-5 w-2/3 bg-gray-300 rounded"></div>
-            <div className="h-4 w-1/2 bg-gray-200 rounded"></div>
-          </div>
-          <div className="flex gap-2">
-            <div className="h-8 w-8 bg-gray-300 rounded-full"></div>
-            <div className="h-8 w-8 bg-gray-300 rounded-full"></div>
-          </div>
-        </div>
+    <div className="w-xs sm:w-md space-y-6 ">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div
+          key={i}
+          className="relative p-5 rounded-xl shadow-md border-2 border-gray-200 bg-white animate-pulse"
+        >
+          {/* Status badge */}
+          <div className="absolute top-2 right-2 h-5 w-20 bg-gray-200 rounded-full" />
 
-        <div className="flex items-center justify-between mt-4 text-sm">
-          <div className="h-6 w-24 bg-gray-200 rounded-full"></div>
-          <div className="flex items-center gap-2">
-            <div className="h-4 w-4 bg-gray-300 rounded-sm"></div>
-            <div className="h-4 w-24 bg-gray-200 rounded"></div>
+          {/* Title */}
+          <div className="h-5 w-2/3 bg-gray-200 rounded mb-2" />
+
+          {/* Description */}
+          <div className="h-4 w-full bg-gray-200 rounded mb-1" />
+          <div className="h-4 w-5/6 bg-gray-200 rounded" />
+
+          {/* Footer Row */}
+          <div className="flex justify-between items-end mt-4">
+            {/* Date */}
+            <div className="space-y-1 text-xs">
+              <div className="h-3 w-20 bg-gray-200 rounded" />
+              <div className="h-3 w-24 bg-gray-200 rounded" />
+              <div className="h-3 w-16 bg-gray-200 rounded" />
+            </div>
+
+            {/* Dropdown */}
+            <div className="flex flex-col items-start gap-1 w-28">
+              <div className="h-4 w-16 bg-gray-300 rounded-sm" />
+              <div className="h-8 w-full bg-gray-200 rounded-md" />
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex gap-2">
+              <div className="h-8 w-8 bg-gray-300 rounded-full" />
+              <div className="h-8 w-8 bg-gray-300 rounded-full" />
+            </div>
           </div>
         </div>
-      </div>
-    </>
+      ))}
+    </div>
   );
 }

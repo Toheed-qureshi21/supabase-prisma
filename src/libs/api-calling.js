@@ -28,6 +28,8 @@ export const addTask = async ({ title, description }, dispatch,userId) => {
     const { data } = await api.post(`/tasks`, { title, description,userId});
    
     dispatch(addTodo(data.data));
+    // console.log(data.data);
+    
     toast.success(data.message);
     return data.data;
   } catch (error) {
@@ -45,7 +47,9 @@ export const getAllTodos = async (dispatch,userId) => {
   headers: {
     "x-user-id": userId
   }
-});
+}); 
+  console.log(data.data,"in api calling ");
+  
     dispatch(setTodo(data.data));
   } catch (error) {
      setError(error.response.data.message);
@@ -61,7 +65,8 @@ export const toUpdateTodo = async(id,dispatch,{title,description}) => {
     dispatch(setUpdateLoading())
     const {data} = await api.put(`/${id}`,{title,description});
     dispatch(updateTodo({id,title,description}));
-    toast.success(data.data.message);
+
+    toast.success(data.message);
     
 
   } catch (error) {
@@ -71,7 +76,7 @@ export const toUpdateTodo = async(id,dispatch,{title,description}) => {
   }
 }
 // function to call api to delete todo with a delete requesst 
-// api route will be ---> `/$id` with delete request
+// api route will be ---> `/$id` with delete request  
 export const toDeleteTodo = async(id,dispatch) => {
     try {
       dispatch(setDeleteLoading());

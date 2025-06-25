@@ -35,7 +35,8 @@ const taskSlice = createSlice({
       state.todos = action.payload;
     },
     addTodo(state,action){
-        state.todos.unshift(action.payload);
+      const data = action.payload
+        state.todos.unshift({...data,isUpdated:false});
          state.addLoading = false;
         state.error = null;
     },

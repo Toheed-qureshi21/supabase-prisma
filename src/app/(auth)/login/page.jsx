@@ -1,6 +1,7 @@
 "use client";
 
 import { api } from "@/libs/api-calling";
+import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -9,6 +10,7 @@ export default function Login() {
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
@@ -23,6 +25,7 @@ export default function Login() {
       console.log("All fields are required");
       return;
     }
+    setLoading(true);
     try {
       const { data } = await api.post(`/auth/login`, formData);
       console.log("login frontend data ", data);
@@ -36,6 +39,8 @@ export default function Login() {
       router.push("/");
     } catch (error) {
       console.log(error.response.data.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -66,12 +71,20 @@ export default function Login() {
           required
           className="w-full mb-6 px-4 py-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-
+        <label className="flex gap-2 mb-4">
+        <input type="checkbox" name="" id="" />
+          Remember me
+        </label>
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-3 rounded font-semibold hover:bg-blue-700 transition"
+          className={`w-full bg-gradient-to-r flex justify-center from-blue-950 to-blue-600 text-white py-3 rounded font-semibold hover:from-blue-950 hover:to-blue-800 transition-all ease-in ${loading ? "opacity-80 hover:cursor-not-allowed":""}`}
+          disabled={loading || !formData.email || !formData.password}
         >
-          Login
+          {loading ? (
+            <Loader2Icon size={20} className="animate-spin" />
+          ) : (
+            "Login"
+          )}
         </button>
       </form>
     </div>
