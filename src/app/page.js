@@ -15,7 +15,7 @@ export default async function Home(req) {
   
 
   return (
-    <main className="flex flex-col items-center min-h-screen  gap-2">
+    <main className="flex flex-col bg-gray-200 items-center min-h-screen  gap-2">
       <nav className="flex  w-full bg-gray-100 shadow-xl  py-8 justify-center gap-6">
         <Link href="/">Home</Link>
         <LogoutButton/>

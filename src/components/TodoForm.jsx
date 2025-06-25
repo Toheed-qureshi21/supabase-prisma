@@ -32,7 +32,7 @@ export default function TodoForm({userId}) {
 
 
     return (
-        <div className=" w-xs sm:w-md flex flex-col  bg-indigo-100 shadow-2xl sm:mx-auto py-12 px-4 rounded-xl">
+        <div className=" w-xs sm:w-md flex flex-col  bg-white shadow-2xl sm:mx-auto py-12 px-4 rounded-xl">
             <form className="flex flex-col gap-6 " onSubmit={handleFormSubmit}>
                 <input
                     type="text"

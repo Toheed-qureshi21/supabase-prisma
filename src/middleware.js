@@ -26,7 +26,6 @@ export default async function middleware(req) {
     try {
         const payload = await verifyTokens(accessToken);
         const refreshPayload = await verifyTokens(refreshToken)
-        console.log("refresh Payload ",refreshPayload);
         
         
         const requestHeaders = new Headers(req.headers);
