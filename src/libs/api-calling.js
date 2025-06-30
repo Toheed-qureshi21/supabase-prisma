@@ -19,13 +19,13 @@ export const api = axios.create({
   withCredentials: true,
 });
 
-export const addTask = async ({ title, description }, dispatch,userId) => {
+export const addTask = async ({ title, description,dueDate }, dispatch,userId) => {
   try {
     if (!title || !description) {
       return null;
     }
     dispatch(setAddTodoLoading());
-    const { data } = await api.post(`/tasks`, { title, description,userId});
+    const { data } = await api.post(`/tasks`, { title, description,userId,dueDate});
    
     dispatch(addTodo(data.data));
     // console.log(data.data);
@@ -66,7 +66,7 @@ export const toUpdateTodo = async(id,dispatch,{title,description}) => {
     const {data} = await api.put(`/${id}`,{title,description});
     // console.log("data in updated ",data.data[0].updated_at);
     
-    dispatch(updateTodo({id,title,description,updated_at:data.data[0].updated_at}));
+    dispatch(updateTodo(data.data));
 
     toast.success(data.message);
     

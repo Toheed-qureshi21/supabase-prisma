@@ -1,4 +1,5 @@
 "use client";
+
 import {
   api,
   getAllTodos,
@@ -9,26 +10,58 @@ import {
   toggleCompletionTodo,
   updateTodoByCompletionMark,
 } from "@/libs/redux/slices/task.slice";
-import { Loader2Icon, Pen, Trash2Icon, CheckCircle2Icon, ArrowDownNarrowWideIcon, LucideArrowDownNarrowWide, MenuIcon, ChevronDown } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+
+import {
+  CheckCircle2Icon,
+  ChevronDown,
+  Loader2Icon,
+  Pen,
+  Trash2Icon,
+} from "lucide-react";
+
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import TodoSkeleton from "./TodoSkeleton";
 import toast from "react-hot-toast";
 
 export default function TodoList({ userId }) {
-  const { todos, updateLoading, loading,isUpdated } = useSelector((state) => state.todo);
+  const { todos, updateLoading, loading, isUpdated } = useSelector(
+    (state) => state.todo
+  );
   const dispatch = useDispatch();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
   const [editTodo, setEditTodo] = useState(null);
   const [editFields, setEditFields] = useState({ title: "", description: "" });
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    (async()=>{
-      await getAllTodos(dispatch, userId);   
+    (async () => {
+      await getAllTodos(dispatch, userId);
     })();
-    
   }, [dispatch]);
 
   const openEditDialog = (todo) => {
@@ -56,13 +89,12 @@ export default function TodoList({ userId }) {
       if (!todo.isCompleted) {
         const { data } = await api.patch(`/markascomplete/${todo.id}`);
         dispatch(toggleCompletionTodo(todo.id));
-        dispatch(updateTodoByCompletionMark(data.data[0]));
+        dispatch(updateTodoByCompletionMark(data.data));
         toast.success("Marked as completed!");
       } else {
         const { data } = await api.patch(`/markasuncomplete/${todo.id}`);
         dispatch(toggleCompletionTodo(todo.id));
         dispatch(updateTodoByCompletionMark(data));
-
         toast.success("Marked as pending.");
       }
     } catch (error) {
@@ -77,249 +109,171 @@ export default function TodoList({ userId }) {
   );
 
   if (loading) {
-    return Array.from({ length: 4 }).map((_, index) => (
-      <TodoSkeleton key={index} />
-    ));
+    return <TodoSkeleton />;
   }
 
   return (
-    <div className="w-xs sm:w-md mx-auto py-6" >
-      {/* Search Input */}
-      {
-        todos?.length > 0 && (
-             <div className="mb-6">
-        <input
-          className="w-full px-4 py-2 border bg-white border-indigo-400 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
-          type="text"
-          placeholder="Search todos..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
-        ) 
-      }
-     
-
-      {/* Todo List */}
-      <div className="space-y-6">
-        {filteredTodos.length === 0 ? (
-          <p className="text-center text-gray-400 italic">
-            No todos found. Create one!
-          </p>
-        ) : (
-          filteredTodos.map((todo) => (
-            <div
-              key={todo.id}
-              className={`relative bg-gradient-to-br from-blue-700 via-indigo-600 to-purple-700 text-white transition-all duration-300 p-5  rounded-xl shadow-md  overflow-hidden  border-2 ${
-                todo.isCompleted
-                  ? " border-green-700"
-                  : " border-indigo-700"
-              }`}
-            >
-              {/* Completed icon */}
-             
-                <div className="absolute top-2 right-2  bg-white/80 px-2 py-1 rounded-full text-xs font-medium shadow">
-                  {
-                    todo.isCompleted ? (
-                      <span className="text-green-600">
-                         <CheckCircle2Icon className="inline-block w-4 h-4 mr-1" />
-                  Completed
-                      </span>
-                    ):(
-                      <span className="text-red-500">Pending</span>
-                    )
-                  }
-                 
-                </div>
-             
-
-              {/* Title + Description */}
-              <div>
-                <h2
-                  className={`text-lg font-semibold ${
-                    todo.isCompleted ? "text-gray-200 line-through" : ""
-                  }`}
-                >
-                  {todo.title}
-                </h2>
-                <p
-                  className={`mt-1 text-sm ${
-                    todo.isCompleted ? "text-gray-200 line-through" : ""
-                  }`}
-                >
-                  {todo.description}
-                </p>
-              </div>
-
-              <div className="flex justify-between max-sm:gap-1 items-end mt-4">
-                {/* Date */}
-                <div className="text-xs text-gray-200">
-                  <p>{todo.isUpdated ? "Updated at" : "Created at"}</p>
-                  <p>
-                    {todo.isUpdated
-                      ? new Date(todo.updated_at).toLocaleDateString(
-                          undefined,
-                          {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          }
-                        )
-                      : new Date(todo.created_at).toLocaleDateString()}
-                  </p>
-                  <p>
-                    {todo.isUpdated
-                      ? new Date(todo.updated_at).toLocaleTimeString(
-                          undefined,
-                          {
-                            hour12:true,
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          }
-                        )
-                      : new Date(todo.created_at).toLocaleTimeString( undefined,
-                          {
-                            hour12:true,
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                  </p>
-                </div>
-
-                {/*  Dropdown */}
-                <div className="flex flex-col gap-1 text-sm">
-                  <label className="text-gray-100 font-medium text-center">Status</label>
-                  <div className="relative w-full flex items-center h-12">
-                    <select
-                      value={todo.isCompleted ? "completed" : "pending"}
-                      onChange={() => handleTodoAsCompletion(todo)}
-                      className={`w-full appearance-none px-4 py-2 pr-10 rounded-lg border text-sm font-medium shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                        todo.isCompleted
-                          ? "bg-green-50 text-green-800 border-green-500 focus:ring-green-300"
-                          : "bg-red-50 text-red-700 border-red-500 focus:ring-red-300"
-                      }`}
-                    >
-                      <option
-                        value="pending"
-                        className="bg-red-100 text-red-700 font-semibold py-2"
-                      >
-                        Pending
-                      </option>
-                      <option
-                        value="completed"
-                        className="bg-green-100 text-green-800 font-semibold py-2"
-                      >
-                        Completed
-                      </option>
-                    </select>
-
-                    {/* Down arrow icon */}
-                    <div className="pointer-events-none absolute right-3  text-gray-500">
-                      <ChevronDown/>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Edit & Delete */}
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => openEditDialog(todo)}
-                    className="p-2 rounded-full bg-yellow-500 hover:bg-yellow-600 text-white"
-                    title="Edit"
-                  >
-                    <Pen size={16} />
-                  </button>
-                  <button
-                    onClick={() => toDeleteTodo(todo.id, dispatch)}
-                    className="p-2 rounded-full bg-red-500 hover:bg-red-600 text-white"
-                    title="Delete"
-                  >
-                    <Trash2Icon size={16} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
-
-      {/* Dialog Box */}
-      {isDialogOpen && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-white w-full max-w-sm p-6 rounded-lg shadow-2xl">
-            <h2 className="text-lg font-semibold mb-4 text-gray-800">
-              Edit Todo
-            </h2>
-            <form className="space-y-4">
-              <div>
-                <label
-                  htmlFor="edit-title"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Title
-                </label>
-                <input
-                  id="edit-title"
-                  type="text"
-                  value={editFields.title}
-                  onChange={(e) =>
-                    setEditFields((prev) => ({
-                      ...prev,
-                      title: e.target.value,
-                    }))
-                  }
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                  placeholder="Enter title"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="edit-description"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Description
-                </label>
-                <textarea
-                  id="edit-description"
-                  value={editFields.description}
-                  onChange={(e) =>
-                    setEditFields((prev) => ({
-                      ...prev,
-                      description: e.target.value,
-                    }))
-                  }
-                  rows="3"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                  placeholder="Enter description"
-                ></textarea>
-              </div>
-
-              <div className="pt-2 flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={closeDialog}
-                  className="px-4 py-2 rounded-md bg-red-600 hover:bg-red-700 text-gray-200 text-sm"
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  disabled={updateLoading}
-                  onClick={handleSave}
-                  className="flex items-center gap-2 px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white text-sm"
-                >
-                  {updateLoading ? (
-                    <Loader2Icon className="w-5 h-5 animate-spin" />
-                  ) : (
-                    "Save"
-                  )}
-                </button>
-              </div>
-            </form>
-          </div>
+    <div className="max-w-6xl mx-auto py-8 px-4">
+      {todos?.length > 0 && (
+        <div className="mb-6">
+          <Input
+            type="text"
+            placeholder="Search todos..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full border-gray-300"
+          />
         </div>
       )}
+
+      <div className="overflow-x-auto border rounded-lg">
+        <Table className="table-auto border border-gray-300">
+          <TableHeader>
+            <TableRow className="bg-gray-100 border-b border-gray-300">
+              <TableHead className="w-[200px] border-r border-gray-300 px-4 py-2">
+                Title
+              </TableHead>
+              <TableHead className="border-r border-gray-300 px-4 py-2">
+                Description
+              </TableHead>
+              <TableHead className="border-r border-gray-300 px-4 py-2">
+                Status
+              </TableHead>
+              <TableHead className="text-center border-r border-gray-300 px-4 py-2">
+                Due Date
+              </TableHead>
+              <TableHead className="text-center px-4 py-2">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredTodos.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={5}
+                  className="text-center italic text-gray-400 px-4 py-2 border-t border-gray-300"
+                >
+                  No todos found. Create one!
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredTodos.map((todo) => (
+                <TableRow key={todo.id} className="border-t border-gray-300">
+                  <TableCell
+                    className={`px-4 py-2 border-r border-gray-300 ${
+                      todo.isCompleted ? "line-through text-gray-400" : ""
+                    }`}
+                  >
+                    {todo.title}
+                  </TableCell>
+                  <TableCell
+                    className={`px-4 py-2 border-r border-gray-300 ${
+                      todo.isCompleted ? "line-through text-gray-400" : ""
+                    }`}
+                  >
+                    {todo.description}
+                  </TableCell>
+                  <TableCell className="px-4 py-2 border-r border-gray-300">
+                    <Select
+                      value={todo.isCompleted ? "completed" : "pending"}
+                      onValueChange={() => handleTodoAsCompletion(todo)}
+                    >
+                      <SelectTrigger
+                        className={`w-[130px] ${
+                          todo.isCompleted
+                            ? "bg-green-100 text-green-800"
+                            : "bg-red-100 text-red-700"
+                        }`}
+                      >
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pending">Pending</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell className="text-xs text-center text-gray-600 px-4 py-2 border-r border-gray-300">
+                    <div>
+                      <p>
+                        {new Date(todo.due_date).toLocaleDateString("en-Gb")}
+                      </p>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-center px-4 py-2">
+                    <div className="flex justify-center gap-2">
+                      <Button
+                        size="icon"
+                        variant="outline"
+                        onClick={() => openEditDialog(todo)}
+                      >
+                        <Pen size={16} />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="destructive"
+                        onClick={() => toDeleteTodo(todo.id, dispatch)}
+                      >
+                        <Trash2Icon size={16} />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Edit Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+  <DialogContent className="sm:max-w-md w-full rounded-xl">
+
+          <DialogHeader>
+            <DialogTitle>Edit Todo</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="title" className="text-sm font-medium">
+                Title
+              </label>
+              <Input
+                id="title"
+                value={editFields.title}
+                onChange={(e) =>
+                  setEditFields((prev) => ({ ...prev, title: e.target.value }))
+                }
+              />
+            </div>
+            <div>
+              <label htmlFor="description" className="text-sm font-medium">
+                Description
+              </label>
+              <Input
+                id="description"
+                value={editFields.description}
+                onChange={(e) =>
+                  setEditFields((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
+              />
+            </div>
+          </div>
+          <DialogFooter className="pt-4">
+            <Button variant="secondary" onClick={closeDialog}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave} disabled={updateLoading}>
+              {updateLoading ? (
+                <Loader2Icon className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                "Save"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

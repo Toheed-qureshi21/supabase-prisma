@@ -2,7 +2,8 @@ import { cookieConfigFn } from "@/constants/constant";
 import { supabase, supabaseAdmin } from "@/libs/supbaseClient";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { prisma } from "../../../../../prisma/prismaClient.js";
+import { prisma } from "../../../../../prisma/prismaClient";
+
 
 // api route --> /signup
 export const POST = async (req) => {

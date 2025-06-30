@@ -3,18 +3,23 @@ import { prisma } from "../../../../../prisma/prismaClient";
 
 export const PATCH = async (req, { params }) => {
   try {
-    const { id } = params;
-   
+    const { id } = await params;
 
     const updatedTodo = await prisma.todo.update({
-      where: { id:id },
+      where: { id: id },
       data: {
         isCompleted: true,
       },
     });
 
+    // Convert BigInt fields to strings before returning JSON
+    const safeTodo = JSON.parse(
+      JSON.stringify(updatedTodo, (_, v) => (typeof v === "bigint" ? v.toString() : v))
+    );
+    console.log("completed todo:", safeTodo);
+    
     return NextResponse.json(
-      { data: updatedTodo, message: "Marked as completed successfully" },
+      { data: safeTodo, message: "Marked as completed successfully" },
       { status: 200 }
     );
   } catch (error) {

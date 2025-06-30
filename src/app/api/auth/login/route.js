@@ -7,7 +7,9 @@ import { prisma } from "../../../../../prisma/prismaClient";
 
 export const POST = async (req) => {
     try {
-        const { email, password } = await req.json();
+        const { email, password,isRemember } = await req.json();
+        console.log("is remember in login ",isRemember);
+        
         if (!email || !password) {
             return NextResponse.json({ message: "All fields are required" }, { status: 400 });
         }
@@ -26,8 +28,8 @@ export const POST = async (req) => {
             }
         });
         console.log("user in login ",user);
-        
-        cookieStore.set("access_token", access_token, cookieConfigFn(60 * 60));
+        const accessTokenMaxAge = isRemember ? 15 * 24 * 60 * 60 : 60 * 60;
+        cookieStore.set("access_token", access_token, cookieConfigFn(accessTokenMaxAge));
         cookieStore.set("refresh_token", refresh_token, cookieConfigFn(15 * 24 * 60 * 60));
         
         return NextResponse.json(

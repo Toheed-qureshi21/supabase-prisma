@@ -5,6 +5,7 @@ import { store } from "@/libs/redux/store";
 import { supabase } from "@/libs/supbaseClient";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 import { Provider, useDispatch } from "react-redux";
 
 export default function ReduxProvider({children}){
@@ -13,7 +14,8 @@ export default function ReduxProvider({children}){
     useEffect(()=>{
         const {data: authListner} = supabase.auth.onAuthStateChange(async(event,session)=>{
         console.log("Auth event:", event)
-
+          console.log("Auth session:", session);
+          
       if (event === "SIGNED_IN" && session) {
         const { data: userData, error } = await supabase.auth.getUser()
         console.log(userData,"from redux ");
@@ -27,6 +29,7 @@ export default function ReduxProvider({children}){
         // Redirect to login
        
         router.push("/login")
+        toast.success("Logout successfully")
       }
      
             

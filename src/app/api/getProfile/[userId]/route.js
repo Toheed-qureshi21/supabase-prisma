@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../../prisma/prismaClient";
+import { prisma } from "../../../../../prisma/prismaClient";
 
-export const GET = async (req) => {
+export const GET = async (req,{params}) => {
   try {
-    const userId = req.headers.get("x-user-id");
+    const {userId} = await params;
+    console.log("user id in get user profile",userId);
+    
 
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });

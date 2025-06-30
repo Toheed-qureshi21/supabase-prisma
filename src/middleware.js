@@ -30,7 +30,7 @@ export default async function middleware(req) {
         
         const requestHeaders = new Headers(req.headers);
         
-        requestHeaders.set("x-user-id", payload.sub); 
+        requestHeaders.set("x-user-id", payload?.sub); 
        
 
         return NextResponse.next({
@@ -46,5 +46,5 @@ export default async function middleware(req) {
 }
 
 export const config = {
-    matcher: ["/", "/api/tasks"],
+    matcher: ["/", "/api/tasks","/api/getProfile"],
 };
